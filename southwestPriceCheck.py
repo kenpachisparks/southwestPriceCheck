@@ -58,7 +58,6 @@ def findFlightPrices(flightPathList, flightDirectionMessage, flightsArray):
         flightListCount = flightListCount + 1
 
 
-
 safariDriver = webdriver.Safari(port=0, executable_path="/usr/bin/safaridriver", quiet=False)
 
 
@@ -73,11 +72,25 @@ searchWebsiteItem.send_keys("AUS")
 searchWebsiteItem = safariDriver.find_element_by_id("destinationAirportCode")
 searchWebsiteItem.send_keys("LAS")
 
+searchWebsiteItem = safariDriver.find_element_by_id("returnDate")
+searchWebsiteItem.clear()
+searchWebsiteItem.send_keys("12/26")
+
+searchWebsiteItem.send_keys(Keys.TAB)
+
+
 searchWebsiteItem = safariDriver.find_element_by_id("departureDate")
+searchWebsiteItem.clear()
 searchWebsiteItem.send_keys("12/22")
 
+searchWebsiteItem.send_keys(Keys.TAB)
+
 searchWebsiteItem = safariDriver.find_element_by_id("returnDate")
+searchWebsiteItem.clear()
 searchWebsiteItem.send_keys("12/26")
+
+searchWebsiteItem.send_keys(Keys.TAB)
+
 
 searchWebsiteItem = safariDriver.find_element_by_id("form-mixin--submit-button")
 searchWebsiteItem.click()
@@ -92,12 +105,12 @@ htmlWebScrap = safariDriver.page_source
 htmlWebScrap= soup(htmlWebScrap, "lxml")
 
 
-dep_arr_split = htmlWebScrap.find_all('span', {'class': 'transition-content price-matrix--details-area'})
-dep = dep_arr_split[0]
-arr = dep_arr_split[1]
-departureFlightsSort = dep.find_all('li', {
+flightDirectionSplit = htmlWebScrap.find_all('span', {'class': 'transition-content price-matrix--details-area'})
+departureSection = flightDirectionSplit[0]
+returnSection = flightDirectionSplit[1]
+departureFlightsSort = departureSection.find_all('li', {
     'class': 'air-booking-select-detail air-booking-select-detail_min-products air-booking-select-detail_min-duration-and-stops'})
-returningFlightsSort = arr.find_all('li', {
+returningFlightsSort = returnSection.find_all('li', {
     'class': 'air-booking-select-detail air-booking-select-detail_min-products air-booking-select-detail_min-duration-and-stops'})
 
 findFlightPrices(departureFlightsSort, 'Flights that are Leaving\n\n', departureFlightsFound)
