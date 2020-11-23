@@ -8,6 +8,11 @@ import time
 import re
 from bs4 import BeautifulSoup as soup
 
+departureAirportCode = "AUS"
+returningAirportCode = "LAS"
+leavingDate = "12/22"
+returningDate = "12/26"
+
 departureFlightsFound = []
 returnFlightsFound = []
 
@@ -67,29 +72,26 @@ WebDriverWait(safariDriver, 10).until(
 
 
 searchWebsiteItem = safariDriver.find_element_by_id("originationAirportCode")
-searchWebsiteItem.send_keys("AUS")
+searchWebsiteItem.send_keys(departureAirportCode)
 
 searchWebsiteItem = safariDriver.find_element_by_id("destinationAirportCode")
-searchWebsiteItem.send_keys("LAS")
-
-searchWebsiteItem = safariDriver.find_element_by_id("returnDate")
-searchWebsiteItem.clear()
-searchWebsiteItem.send_keys("12/26")
+searchWebsiteItem.send_keys(returningAirportCode)
 
 searchWebsiteItem.send_keys(Keys.TAB)
 
+time.sleep(1)
 
 searchWebsiteItem = safariDriver.find_element_by_id("departureDate")
 searchWebsiteItem.clear()
-searchWebsiteItem.send_keys("12/22")
+searchWebsiteItem.send_keys(leavingDate)
 
-searchWebsiteItem.send_keys(Keys.TAB)
+time.sleep(1)
 
 searchWebsiteItem = safariDriver.find_element_by_id("returnDate")
 searchWebsiteItem.clear()
-searchWebsiteItem.send_keys("12/26")
+searchWebsiteItem.send_keys(returningDate)
 
-searchWebsiteItem.send_keys(Keys.TAB)
+time.sleep(1)
 
 
 searchWebsiteItem = safariDriver.find_element_by_id("form-mixin--submit-button")
