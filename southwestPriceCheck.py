@@ -1,5 +1,9 @@
 from selenium import webdriver
+
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
 import re
 from bs4 import BeautifulSoup as soup
@@ -59,29 +63,31 @@ safariDriver = webdriver.Safari(port=0, executable_path="/usr/bin/safaridriver",
 
 
 safariDriver.get("https://www.southwest.com/air/booking/index.html?clk=GSUBNAV-AIR-BOOK")
-time.sleep(3)
+WebDriverWait(safariDriver, 10).until(
+    EC.element_to_be_clickable((By.ID, "form-mixin--submit-button")))
 
 
 searchWebsiteItem = safariDriver.find_element_by_id("originationAirportCode")
 searchWebsiteItem.send_keys("AUS")
-time.sleep(1)
+
 searchWebsiteItem = safariDriver.find_element_by_id("destinationAirportCode")
 searchWebsiteItem.send_keys("LAS")
-time.sleep(1)
+
 searchWebsiteItem = safariDriver.find_element_by_id("departureDate")
 searchWebsiteItem.send_keys("12/22")
-time.sleep(1)
+
 searchWebsiteItem = safariDriver.find_element_by_id("returnDate")
 searchWebsiteItem.send_keys("12/26")
-time.sleep(1)
+
 searchWebsiteItem = safariDriver.find_element_by_id("form-mixin--submit-button")
 searchWebsiteItem.click()
 searchWebsiteItem.send_keys(Keys.RETURN)
 
-time.sleep(3)
+WebDriverWait(safariDriver, 10).until(
+    EC.element_to_be_clickable((By.ID, "air-booking-product-2")))
 
 htmlWebScrap = safariDriver.page_source
-time.sleep(1)
+
 
 htmlWebScrap= soup(htmlWebScrap, "lxml")
 
@@ -96,4 +102,3 @@ returningFlightsSort = arr.find_all('li', {
 
 findFlightPrices(departureFlightsSort, 'Flights that are Leaving\n\n', departureFlightsFound)
 findFlightPrices(returningFlightsSort, 'Flights that are Returning\n\n', returnFlightsFound)
-
