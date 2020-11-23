@@ -29,9 +29,9 @@ def findFlightPrices(flightPathList, flightDirectionMessage, flightsArray):
         durationStops = flightTimeSlot.find('div', {'class': 'select-detail--number-of-stops'})
         durationStops = durationStops.text
         if 'Nonstop' in durationStops:
-            durationStops = durationStops[0:7]
+            durationStops = durationStops[:7]
         else:
-            durationStops = durationStops[0:2]
+            durationStops = durationStops[:2]
         flightDuration = flightDuration + '\nTotal Stop(s): ' + durationStops
         flightPrice = flightTimeSlot.find('div', {'class': 'fare-button fare-button_primary-yellow select-detail--fare'})
         flightPrice = flightPrice.text
