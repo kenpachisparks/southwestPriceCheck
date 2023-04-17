@@ -1,3 +1,17 @@
+'''
+To Setup Install Python3 then
+
+sudo pip3 install selenium
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py
+sudo pip3 install bs4
+pip install lxml
+To Run:
+python3 southwestPriceCheck.py
+
+'''
+
+
+
 from selenium import webdriver
 
 from selenium.webdriver.common.by import By
@@ -10,8 +24,8 @@ from bs4 import BeautifulSoup as soup
 
 departureAirportCode = "AUS"
 returningAirportCode = "LAS"
-leavingDate = "12/22"
-returningDate = "12/26"
+leavingDate = "5/10"
+returningDate = "5/13"
 
 departureFlightsFound = []
 returnFlightsFound = []
@@ -38,14 +52,16 @@ def findFlightPrices(flightPathList, flightDirectionMessage, flightsArray):
         else:
             durationStops = durationStops[:2]
         flightDuration = flightDuration + '\nTotal Stop(s): ' + durationStops
-        flightPrice = flightTimeSlot.find('div', {'class': 'fare-button fare-button_primary-yellow select-detail--fare'})
+        flightPrice = flightTimeSlot.find('span', {'class': 'currency currency_dollars currency-box'})
         flightPrice = flightPrice.text
         flightPrice = flightPrice[flightPrice.find('$'):]
         flightPriceResult = flightPrice.endswith('left')
         if flightPriceResult is True:
             flightPrice = flightPrice[:flightPrice.find(' ')]
             flightPrice = flightPrice[:-1]
-        if int(flightPrice[1:]) < 140:
+
+###----------------------------- Change the number on the right of < to the last price that was paid
+        if int(flightPrice[1:]) < 240:
             flightsArray.append(('Flight Plan: ' + str(
                 flightCount) + '\n' + departureTimeText + '\n' + arrivalTimeText + '\nDuration: ' + flightDuration + '\nPrice: ' + flightPrice + '\nFlight Number(s): ' + flitghtNumbers))
 
@@ -71,32 +87,40 @@ WebDriverWait(safariDriver, 10).until(
     EC.element_to_be_clickable((By.ID, "form-mixin--submit-button")))
 
 
-searchWebsiteItem = safariDriver.find_element_by_id("originationAirportCode")
+searchWebsiteItem = safariDriver.find_element("id", "originationAirportCode")
 searchWebsiteItem.send_keys(departureAirportCode)
+searchWebsiteItem.send_keys(Keys.RETURN)
 
-searchWebsiteItem = safariDriver.find_element_by_id("destinationAirportCode")
+time.sleep(1)
+
+searchWebsiteItem = safariDriver.find_element("id", "departureDate")
+searchWebsiteItem.clear()
+searchWebsiteItem.send_keys(leavingDate)
+searchWebsiteItem.send_keys(Keys.TAB)
+searchWebsiteItem.send_keys(Keys.TAB)
+searchWebsiteItem.send_keys(Keys.TAB)
+
+searchWebsiteItem = safariDriver.find_element("id", "destinationAirportCode")
 searchWebsiteItem.send_keys(returningAirportCode)
 
 searchWebsiteItem.send_keys(Keys.TAB)
 
 time.sleep(1)
 
-searchWebsiteItem = safariDriver.find_element_by_id("departureDate")
-searchWebsiteItem.clear()
-searchWebsiteItem.send_keys(leavingDate)
-
-time.sleep(1)
-
-searchWebsiteItem = safariDriver.find_element_by_id("returnDate")
+searchWebsiteItem = safariDriver.find_element("id", "returnDate")
 searchWebsiteItem.clear()
 searchWebsiteItem.send_keys(returningDate)
 
 time.sleep(1)
 
-
-searchWebsiteItem = safariDriver.find_element_by_id("form-mixin--submit-button")
-searchWebsiteItem.click()
+searchWebsiteItem = safariDriver.find_element("id", "originationAirportCode")
+searchWebsiteItem.send_keys(departureAirportCode)
 searchWebsiteItem.send_keys(Keys.RETURN)
+
+time.sleep(1)
+
+searchWebsiteItem = safariDriver.find_element("id", "form-mixin--submit-button")
+searchWebsiteItem.click()
 
 WebDriverWait(safariDriver, 10).until(
     EC.element_to_be_clickable((By.ID, "air-booking-product-2")))
@@ -111,9 +135,9 @@ flightDirectionSplit = htmlWebScrap.find_all('span', {'class': 'transition-conte
 departureSection = flightDirectionSplit[0]
 returnSection = flightDirectionSplit[1]
 departureFlightsSort = departureSection.find_all('li', {
-    'class': 'air-booking-select-detail air-booking-select-detail_min-products air-booking-select-detail_min-duration-and-stops'})
+    'class': 'air-booking-select-detail'})
 returningFlightsSort = returnSection.find_all('li', {
-    'class': 'air-booking-select-detail air-booking-select-detail_min-products air-booking-select-detail_min-duration-and-stops'})
+    'class': 'air-booking-select-details'})
 
 findFlightPrices(departureFlightsSort, 'Flights that are Leaving\n\n', departureFlightsFound)
 findFlightPrices(returningFlightsSort, 'Flights that are Returning\n\n', returnFlightsFound)
